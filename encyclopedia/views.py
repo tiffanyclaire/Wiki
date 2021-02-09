@@ -1,6 +1,6 @@
 from django import forms
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from . import util
@@ -8,11 +8,11 @@ from markdown2 import markdown
 
 class NewEntry(forms.Form):
     entry = forms.CharField(label="Entry Title")
-    content = forms.CharField(label="Description")
+    content = forms.CharField(widget=forms.Textarea, label="Description")
 
 class EditEntry(forms.Form):
-    entry = forms.CharField(widget=forms.HiddenInput)
-    content = forms.CharField(widget=forms.Textarea)
+    entry = forms.CharField(label="Entry Title")
+    content = forms.CharField(widget=forms.Textarea, label="Description")
 
 
 def index(request):
@@ -72,21 +72,27 @@ def add(request):
                   })
 
 
+
+
 def edit(request, title):
-    if request.method == "GET" :
-        content =  util.get_entry(title)
-        form = EditEntry(initial={'content' : content})
+    if request.method == "GET":
+        content = util.get_entry(title)
+        form = EditEntry(initial= {'content' : content, 'entry' : title})
         return render(request, "encyclopedia/edit.html", {
             "form" : form,
-            "title": title
+            "title" : title
         })
-
-    else:
+    if request.method == "POST":
         form = EditEntry(request.POST)
         if form.is_valid():
-            title = form.cleaned_data ['title']
-            content = form.cleaned_data ['content']
-            util.save_entry(entry, content)
-            return HttpResponseRedirect(reverse("entry", args=(entry,)))
+            title = form.cleaned_data["entry"]
+            content = form.cleaned_data["content"]
+            util.save_entry(title, content)
+            return HttpResponseRedirect("/wiki/" + title)
 
-            
+        
+
+
+
+
+

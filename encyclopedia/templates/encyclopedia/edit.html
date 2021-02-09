@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<form action="{% url 'edit' title %}" method="POST">
+<form action="{% url 'edit' title %}" method="post">
     {% csrf_token %}
 
 <h2>Edit Entry</h2>
