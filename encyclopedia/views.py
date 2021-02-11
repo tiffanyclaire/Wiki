@@ -33,23 +33,15 @@ def entry(request, title):
 })
 
 
-'''def add(request):
-        if request.method == "POST":
-            form = NewEntryForm(request.POST)
-            if form.is_valid():
-                entry = form.cleaned_data["entry"]
-                content = form.cleaned_data["content"]
-                util.save_entry(entry, content)
-                return HttpResponseRedirect(reverse("entry", args=(entry,)))
-            else:
-                return render (request, "new_entry/html", {
-                    "form": form
-                })
+def search(request):
+    query = request.GET.get('q')
+    if util.get_entry(query):
+        return HttpResponseRedirect(reverse("entry", args=(query,)))
+
+    
 
 
-        return render(request, "encyclopedia/new_entry.html", {
-            "form": NewEntryForm()
-                  })'''
+
 
 
 def add(request):
@@ -89,10 +81,3 @@ def edit(request, title):
             content = form.cleaned_data["content"]
             util.save_entry(title, content)
             return HttpResponseRedirect("/wiki/" + title)
-
-        
-
-
-
-
-
